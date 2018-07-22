@@ -5,14 +5,16 @@ class RayTracer
   int bufferHeight;
   int bufferWidth;
   PVector cameraPos;
+  float screenZ;
   Sphere[] spheresToDraw;
   
-  RayTracer(int bufferHeight, int bufferWidth, float camX, float camY, float camZ, Sphere[] spheres)
+  RayTracer(int bufferHeight, int bufferWidth, float camX, float camY, float camZ, float screenZ, Sphere[] spheres)
   {
     this.bufferHeight = bufferHeight;
     this.bufferWidth = bufferWidth;
     frameBuffer = new FragmentColor[bufferWidth][bufferHeight];
     cameraPos = new PVector(camX, camY, camZ);
+    this.screenZ = screenZ;
     spheresToDraw = spheres;
     
     // Init framebuffer to black
@@ -32,10 +34,9 @@ class RayTracer
     float pixelCenterY = (h + 0.5);
     Ray primRay = new Ray();
     primRay.origin = cameraPos;
-    float aspectRatio = bufferWidth / bufferHeight;
-    primRay.direction = new PVector((pixelCenterX - cameraPos.x) * aspectRatio, pixelCenterY - cameraPos.y, 100 - cameraPos.z);
+    primRay.direction = new PVector(pixelCenterX - cameraPos.x, pixelCenterY - cameraPos.y, screenZ - cameraPos.z);
     //primRay.direction = new PVector(pixelCenterX, pixelCenterY, -1);
-    primRay.direction.normalize(); // This will make calculations (and our life) easier
+    //primRay.direction.normalize(); // This will make calculations (and our life) easier
     
     return primRay;
   }
@@ -52,14 +53,14 @@ class RayTracer
   
   float intersectSphere(Ray ray, Sphere sphere)
   {  
-    float t = -1; // This will hold the intersection point. Negative value will mean that no intersection was found if front of the camera.
+    float t = -1; // This will hold the intersection point. Negative value will mean that no intersection was found in front of the camera.
     
     PVector origin = new PVector(ray.origin.x, ray.origin.y, ray.origin.z);              // Deep copy needed to keep original vectors intact
     PVector direction = new PVector(ray.direction.x, ray.direction.y, ray.direction.z);
     
     PVector rayOrigToSphereCent = origin.sub(sphere.center); // o - c , calculate now because we'll need it more than once below
     float a = direction.dot(direction); // a = d^2;
-    float b = -2 * rayOrigToSphereCent.dot(direction); // b = -2 * (o - c) * d
+    float b = 2 * direction.dot(rayOrigToSphereCent); // b = 2 * d * (o - c)
     float c = rayOrigToSphereCent.dot(rayOrigToSphereCent) - pow(sphere.radius, 2); // c = (o - c)^2 -r^2
     
     float discriminant = calculateDiscriminant(a, b, c);

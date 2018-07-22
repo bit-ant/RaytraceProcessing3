@@ -1,21 +1,25 @@
-int frameHeight = 200;
-int frameWidth = 200;
-float cameraX = 100.0;
-float cameraY = 100.0;
+int frameHeight = 500;
+int frameWidth = 500;
+float cameraX = 200.0;
+float cameraY = 200.0;
 float cameraZ = 0.0;
 float screenZ = 100.0; // frustum "near"
+int numOfSpheres = 5;
 
 void setup() 
 {
-  size(200, 200, P3D); // 500px X 500px window with P3D renderer
-  //frustum(-10, 0, 0, 10, 10, 200);
+  size(500, 500, P3D); // 500px X 500px window with P3D renderer
+  noLoop();
 }
 
 void draw() 
 {
-  Sphere sphere = new Sphere(100.0, 150.0, 80.0, 50.0);
-  Sphere[] spheres = new Sphere[1];
-  spheres[0] = sphere;
+  Sphere[] spheres = new Sphere[numOfSpheres];
+  for (int i = 0; i < numOfSpheres; ++i)
+  {
+    Sphere sphere = new Sphere(random(50, 450), random(50, 450), 260.0, 50.0);
+    spheres[i] = sphere;
+  }
   
   RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, spheres);
   myRayTracer.render();

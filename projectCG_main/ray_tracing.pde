@@ -1,7 +1,7 @@
 class RayTracer
 {
   FragmentColor[][] frameBuffer;
-  float[][] zbuffer;
+  float[][] zBuffer;
   int bufferHeight;
   int bufferWidth;
   PVector cameraPos;
@@ -13,6 +13,7 @@ class RayTracer
     this.bufferHeight = bufferHeight;
     this.bufferWidth = bufferWidth;
     frameBuffer = new FragmentColor[bufferWidth][bufferHeight];
+    zBuffer = new float[bufferWidth][bufferHeight];
     cameraPos = new PVector(camX, camY, camZ);
     this.screenZ = screenZ;
     spheresToDraw = spheres;
@@ -24,6 +25,15 @@ class RayTracer
       for (int w = 0; w < bufferWidth; ++w)
       {
             frameBuffer[w][h] = black;
+      }
+    }
+    
+    // Init z-buffer to maximum depth
+    for (int h = 0; h < bufferHeight; ++h)
+    {
+      for (int w = 0; w < bufferWidth; ++w)
+      {
+            zBuffer[w][h] = Float.MAX_VALUE;
       }
     }
   }
@@ -95,10 +105,11 @@ class RayTracer
         for (int s = 0; s < spheresToDraw.length; ++s)
         {
           float intersect = intersectSphere(primRay, spheresToDraw[s]);
-          if (intersect >= 0)
+          if (intersect >= 0 && intersect < zBuffer[w][h])
           {
-            FragmentColor color1 = new FragmentColor(125,125,125);
-            frameBuffer[w][h] = color1;
+            FragmentColor fragmentColor = new FragmentColor(125,125,125);
+            frameBuffer[w][h] = fragmentColor;
+            zBuffer[w][h] = intersect;
           }
         }
       }

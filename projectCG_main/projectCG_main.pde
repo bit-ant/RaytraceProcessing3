@@ -1,10 +1,10 @@
 int frameHeight = 500;
 int frameWidth = 500;
-float cameraX = 200.0;
-float cameraY = 200.0;
+float cameraX = 250.0;
+float cameraY = 250.0;
 float cameraZ = 0.0;
 float screenZ = 100.0; // frustum "near"
-int numOfSpheres = 5;
+int numOfSpheres = 500;
 
 void setup() 
 {
@@ -17,7 +17,7 @@ void draw()
   Sphere[] spheres = new Sphere[numOfSpheres];
   for (int i = 0; i < numOfSpheres; ++i)
   {
-    Sphere sphere = new Sphere(random(50, 450), random(50, 450), 260.0, 50.0);
+    Sphere sphere = new Sphere(random(-600, 600), random(-600, 600), 110.0, 5.0);
     spheres[i] = sphere;
   }
   

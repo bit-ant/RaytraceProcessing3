@@ -32,6 +32,18 @@ class Ray
   }
 } // Class Ray
 
+class BoundingBox
+{
+  PVector vMin;
+  PVector vMax;
+  
+  BoundingBox(PVector vMin, PVector vMax)
+  {
+    this.vMin = vMin;
+    this.vMax = vMax;
+  }
+} // Class BoundingBox
+
 float calculateDiscriminant(float a, float b, float c)
 {
     float discriminant = pow(b, 2) - (4 * a * c);
@@ -54,4 +66,12 @@ float[] solveQuadricEquationTwoSolutions(float a, float b, float discriminant)
   solutions[0] = x0;
   solutions[1] = x1;
   return solutions;
+}
+
+BoundingBox calculateBoundingBoxForSphere(Sphere sphere)
+{
+  PVector vMin = new PVector(sphere.center.x - sphere.radius, sphere.center.y - sphere.radius, sphere.center.z - sphere.radius);
+  PVector vMax = new PVector(sphere.center.x + sphere.radius, sphere.center.y + sphere.radius, sphere.center.z + sphere.radius);
+  BoundingBox box = new BoundingBox(vMin, vMax);
+  return box;
 }

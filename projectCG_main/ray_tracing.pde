@@ -7,6 +7,7 @@ class RayTracer
   PVector cameraPos;
   float screenZ;
   Sphere[] spheresToDraw;
+  BoundingBox[] boundingBoxes;
   
   RayTracer(int bufferHeight, int bufferWidth, float camX, float camY, float camZ, float screenZ, Sphere[] spheres)
   {
@@ -17,6 +18,13 @@ class RayTracer
     cameraPos = new PVector(camX, camY, camZ);
     this.screenZ = screenZ;
     spheresToDraw = spheres;
+    boundingBoxes = new BoundingBox[spheresToDraw.length];
+    
+    // Calculate bounding boxes for the spheres
+    for (int s = 0; s < spheresToDraw.length; ++s)
+    {
+      boundingBoxes[s] = calculateBoundingBoxForSphere(spheresToDraw[s]);
+    }
     
     // Init framebuffer to black
     FragmentColor black = new FragmentColor(0, 0, 0);
@@ -65,8 +73,8 @@ class RayTracer
   {  
     float t = -1; // This will hold the intersection point. Negative value will mean that no intersection was found in front of the camera.
     
-    PVector origin = new PVector(ray.origin.x, ray.origin.y, ray.origin.z);              // Deep copy needed to keep original vectors intact
-    PVector direction = new PVector(ray.direction.x, ray.direction.y, ray.direction.z);
+    PVector origin = ray.origin.copy();       // Copy needed to keep original vectors intact
+    PVector direction = ray.direction.copy();
     
     PVector rayOrigToSphereCent = origin.sub(sphere.center); // o - c , calculate now because we'll need it more than once below
     float a = direction.dot(direction); // a = d^2;
@@ -90,7 +98,7 @@ class RayTracer
       float x0 = (-b + sqrt(discriminant)) / (2 * a);
       float x1 = (-b - sqrt(discriminant)) / (2 * a);
       
-      t = (x0 > x1) ? x0 : x1;
+      t = (x0 < x1) ? x0 : x1;
     }
     return t;
   }

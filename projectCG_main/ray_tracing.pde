@@ -245,13 +245,13 @@ class RayTracer
               zBuffer[w][h] = t;
               
               // Calculate normal of intersection point
-              PVector intersectionPoint = primRay.origin.copy().add(primRay.direction.copy().mult(t)); // o + t * d
+              PVector tmp = new PVector(0, 0, primRay.origin.z);
+              PVector intersectionPoint = tmp.add(primRay.direction.copy().mult(t)); // o + t * d
               PVector normal = (intersectionPoint.copy().sub(primRay.origin)).normalize(); // N = ||p - c||
               
               // Calculate spherical coordinates
-              PVector norm_inter = intersectionPoint.copy().normalize();
-              float phi = atan2(intersectionPoint.z, intersectionPoint.x); //<>//
-              float theta = acos(intersectionPoint.x / spheresToDraw[s].radius);
+              float phi = atan2(intersectionPoint.z, intersectionPoint.x);
+              float theta = acos(intersectionPoint.y / spheresToDraw[s].radius);
               
               // Calculate tangent and bi-tangent vectors
               PVector tangent = new PVector(-sin(phi), cos(phi), 0);

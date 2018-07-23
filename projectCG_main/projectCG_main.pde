@@ -7,13 +7,12 @@ float cameraZ = 0.0;
 
 float screenZ = 100.0; // frustum "near"
 
-float lightSourceX = 200;
+float lightSourceX = 250;
 float lightSourceY = 180;
-float lightSourceZ = 80;
+float lightSourceZ = 1980;
 
 int numOfSpheres = 500;
 
-String dir = "data/";
 String normalPlanet = "normal-planet.jpg";
 String normalMoon = "normal-moon.jpg";
 String normalGlace = "normal-glace.jpg";
@@ -35,16 +34,16 @@ void draw()
   Sphere[] spheres = new Sphere[numOfSpheres];
   for (int i = 0; i < numOfSpheres; ++i)
   {
-    Sphere sphere = new Sphere(random(-600, 600), random(-600, 600), random(80.0, 120.0), 5.0);
+    Sphere sphere = new Sphere(random(-600, 600), random(-600, 600), random(80.0, 200.0), 10.0);
     spheres[i] = sphere;
   }
   
-  // Create sphere at center
-  Sphere[] spheres1 = new Sphere[1];
-  Sphere sphere = new Sphere(250, 250, 110, 100.0);
-  spheres1[0] = sphere;
+  //// Create sphere at center
+  //Sphere[] spheres1 = new Sphere[1];
+  //Sphere sphere = new Sphere(250, 250, 110, 100.0);
+  //spheres1[0] = sphere;
   
-  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, lightSourceX, lightSourceY, lightSourceZ, spheres1, normalLeather);
+  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, lightSourceX, lightSourceY, lightSourceZ, spheres, normalGlace);
   myRayTracer.renderScene();
   
   long timeNeeded = System.nanoTime() - startTime;

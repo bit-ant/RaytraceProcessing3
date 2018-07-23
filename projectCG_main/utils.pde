@@ -1,25 +1,3 @@
-class Sphere
-{
-  PVector center;
-  float radius;
-  
-  Sphere(float x, float y, float z, float r)
-  {
-    center = new PVector(x, y, z);
-    radius = r;
-  }
-}
-
-class FragmentColor
-{
-  PVector rgbValues;
-  
-  FragmentColor(float red, float green, float blue)
-  {
-    rgbValues = new PVector(red, green, blue);
-  }
-} // Class FragmentColor
-
 class Ray
 {
   PVector origin;

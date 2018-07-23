@@ -44,8 +44,8 @@ void draw()
   Sphere sphere = new Sphere(250, 250, 110, 100.0);
   spheres1[0] = sphere;
   
-  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, lightSourceX, lightSourceY, lightSourceZ, spheres1, normalMoon);
-  myRayTracer.renderScene(); //<>//
+  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, lightSourceX, lightSourceY, lightSourceZ, spheres1, normalLeather);
+  myRayTracer.renderScene();
   
   long timeNeeded = System.nanoTime() - startTime;
   println("Frame rendered in "+ timeNeeded + " nanoseconds.");

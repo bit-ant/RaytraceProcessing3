@@ -49,6 +49,7 @@ class RayTracer
     
     // Load normal map
     normalMap = loadImage(normalImage);
+    normalMap.loadPixels();
   }
   
   Ray createPrimaryRay(float h /* heigth */, float w /* width */)
@@ -248,8 +249,9 @@ class RayTracer
               PVector normal = (intersectionPoint.copy().sub(primRay.origin)).normalize(); // N = ||p - c||
               
               // Calculate spherical coordinates
-              float phi = atan2(intersectionPoint.z, intersectionPoint.x);
-              float theta = acos(intersectionPoint.y / spheresToDraw[s].radius);
+              PVector norm_inter = intersectionPoint.copy().normalize();
+              float phi = atan2(intersectionPoint.z, intersectionPoint.x); //<>//
+              float theta = acos(intersectionPoint.x / spheresToDraw[s].radius);
               
               // Calculate tangent and bi-tangent vectors
               PVector tangent = new PVector(-sin(phi), cos(phi), 0);
@@ -261,18 +263,18 @@ class RayTracer
               int v = int(normalMap.height * (theta / PI));
               
               color c = normalMap.get(v, u);
-              PVector map = new PVector((red(c) - 127)/127.0, (green(c) - 127)/127.0, blue(c) / 255.0);
+              PVector map = new PVector((red(c) - 127) / 127.0, (green(c) - 127) / 127.0, blue(c) / 255.0);
               map.normalize();
               PVector normalModified = new PVector(map.x * tangent.x + map.y * bitangent.x + map.z * normal.x, map.x * tangent.y + map.y * bitangent.y + map.z * normal.y, map.x * tangent.z + map.y * bitangent.z + map.z * normal.z);
               normalModified.normalize();
               
-              PVector light = lightSourcePos.copy().sub(intersectionPoint); //<>//
+              PVector light = lightSourcePos.copy().sub(intersectionPoint);
               light.normalize();
               float intensity = normalModified.dot(light);
               frameBuffer[w][h] = 15;
               if (intensity > 0)
               {
-                 frameBuffer[w][h] += 240 * intensity; //<>//
+                 frameBuffer[w][h] += 240 * intensity;
               }
             }
           }

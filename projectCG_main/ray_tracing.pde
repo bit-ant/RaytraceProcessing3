@@ -1,6 +1,6 @@
 class RayTracer
 {
-  FragmentColor[][] frameBuffer;
+  float[][] frameBuffer;
   float[][] zBuffer;
   int bufferHeight;
   int bufferWidth;
@@ -9,12 +9,13 @@ class RayTracer
   float screenZ;
   Sphere[] spheresToDraw;
   BoundingBox[] boundingBoxes;
+  PImage normalMap;
   
-  RayTracer(int bufferHeight, int bufferWidth, float camX, float camY, float camZ, float screenZ, float lightSourceX, float lightSourceY,float lightSourceZ, Sphere[] spheres)
+  RayTracer(int bufferHeight, int bufferWidth, float camX, float camY, float camZ, float screenZ, float lightSourceX, float lightSourceY,float lightSourceZ, Sphere[] spheres, String normalImage)
   {
     this.bufferHeight = bufferHeight;
     this.bufferWidth = bufferWidth;
-    frameBuffer = new FragmentColor[bufferWidth][bufferHeight];
+    frameBuffer = new float[bufferWidth][bufferHeight];
     zBuffer = new float[bufferWidth][bufferHeight];
     cameraPos = new PVector(camX, camY, camZ);
     lightSourcePos = new PVector(lightSourceX, lightSourceY, lightSourceZ);
@@ -29,12 +30,11 @@ class RayTracer
     }
     
     // Init framebuffer to black
-    FragmentColor black = new FragmentColor(0, 0, 0);
     for (int h = 0; h < bufferHeight; ++h)
     {
       for (int w = 0; w < bufferWidth; ++w)
       {
-            frameBuffer[w][h] = black;
+            frameBuffer[w][h] = 0;
       }
     }
     
@@ -46,6 +46,9 @@ class RayTracer
             zBuffer[w][h] = Float.MAX_VALUE;
       }
     }
+    
+    // Load normal map
+    normalMap = loadImage(normalImage);
   }
   
   Ray createPrimaryRay(float h /* heigth */, float w /* width */)
@@ -223,7 +226,7 @@ class RayTracer
     return true; // All tests passed, there is an intersection!
   }
 
-  void render() 
+  void renderScene() 
   {
     for (int h = 0; h < bufferHeight; ++h)
     {
@@ -235,12 +238,42 @@ class RayTracer
           // If there is an intersection with the bounding box, proceed with calculating ray-sphere intersection
           if (intersectBox(primRay, boundingBoxes[s]))
           {
-            float intersect = intersectSphere(primRay, spheresToDraw[s]);
-            if (intersect >= 0 && intersect < zBuffer[w][h])
+            float t = intersectSphere(primRay, spheresToDraw[s]);
+            if (t >= 0 && t < zBuffer[w][h])
             {
-              FragmentColor fragmentColor = new FragmentColor(125,125,125);
-              frameBuffer[w][h] = fragmentColor;
-              zBuffer[w][h] = intersect;
+              zBuffer[w][h] = t;
+              
+              // Calculate normal of intersection point
+              PVector intersectionPoint = primRay.origin.copy().add(primRay.direction.copy().mult(t)); // o + t * d
+              PVector normal = (intersectionPoint.copy().sub(primRay.origin)).normalize(); // N = ||p - c||
+              
+              // Calculate spherical coordinates
+              float phi = atan2(intersectionPoint.z, intersectionPoint.x);
+              float theta = acos(intersectionPoint.y / spheresToDraw[s].radius);
+              
+              // Calculate tangent and bi-tangent vectors
+              PVector tangent = new PVector(-sin(phi), cos(phi), 0);
+              tangent.normalize();
+              PVector bitangent = normal.copy().cross(tangent);
+              bitangent.normalize();
+              
+              int u = int(normalMap.width * (phi / (2 * PI)));
+              int v = int(normalMap.height * (theta / PI));
+              
+              color c = normalMap.get(v, u);
+              PVector map = new PVector((red(c) - 127)/127.0, (green(c) - 127)/127.0, blue(c) / 255.0);
+              map.normalize();
+              PVector normalModified = new PVector(map.x * tangent.x + map.y * bitangent.x + map.z * normal.x, map.x * tangent.y + map.y * bitangent.y + map.z * normal.y, map.x * tangent.z + map.y * bitangent.z + map.z * normal.z);
+              normalModified.normalize();
+              
+              PVector light = lightSourcePos.copy().sub(intersectionPoint); //<>//
+              light.normalize();
+              float intensity = normalModified.dot(light);
+              frameBuffer[w][h] = 15;
+              if (intensity > 0)
+              {
+                 frameBuffer[w][h] += 240 * intensity; //<>//
+              }
             }
           }
         }
@@ -252,10 +285,8 @@ class RayTracer
     {
       for (int x = 0; x < frameWidth; ++x) 
       {
-        float r = frameBuffer[x][y].rgbValues.x;
-        float g = frameBuffer[x][y].rgbValues.y;
-        float b = frameBuffer[x][y].rgbValues.z;
-        stroke(r, g, b);
+        float intensity = frameBuffer[x][y];
+        stroke(intensity);
         point(x, y);
       }
     }

@@ -1,9 +1,16 @@
 int frameHeight = 500;
 int frameWidth = 500;
+
 float cameraX = 250.0;
 float cameraY = 250.0;
 float cameraZ = 0.0;
+
 float screenZ = 100.0; // frustum "near"
+
+float lightSourceX = 200;
+float lightSourceY = 180;
+float lightSourceZ = 110;
+
 int numOfSpheres = 500;
 
 void setup() 
@@ -14,23 +21,19 @@ void setup()
 
 void draw() 
 {
+  long startTime = System.nanoTime(); // Measure rendering time
+  
+  // Create random spheres
   Sphere[] spheres = new Sphere[numOfSpheres];
   for (int i = 0; i < numOfSpheres; ++i)
   {
-    Sphere sphere = new Sphere(random(-600, 600), random(-600, 600), 110.0, 5.0);
+    Sphere sphere = new Sphere(random(-600, 600), random(-600, 600), random(80.0, 120.0), 5.0);
     spheres[i] = sphere;
   }
   
-  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, spheres);
-  myRayTracer.render();
+  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, lightSourceX, lightSourceY, lightSourceZ, spheres);
+  myRayTracer.render(); //<>//
   
-  for (int y = 0; y < frameHeight; ++y) {
-    for (int x = 0; x < frameWidth; ++x) {
-      float r = myRayTracer.frameBuffer[x][y].rgbValues.x;
-      float g = myRayTracer.frameBuffer[x][y].rgbValues.y;
-      float b = myRayTracer.frameBuffer[x][y].rgbValues.z;
-      stroke(r, g, b);
-      point(x, y); //<>//
-    }
-  }
+  long timeNeeded = System.nanoTime() - startTime;
+  println("Frame rendered in "+ timeNeeded + " nanoseconds.");
 }

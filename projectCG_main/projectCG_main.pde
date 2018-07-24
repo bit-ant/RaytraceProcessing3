@@ -46,6 +46,17 @@ void draw()
   RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, lightSourceX, lightSourceY, lightSourceZ, spheres, normalGlace);
   myRayTracer.renderScene();
   
+   // Show on screen
+  for (int y = 0; y < frameHeight; ++y)
+  {
+    for (int x = 0; x < frameWidth; ++x) 
+    {
+      float intensity = myRayTracer.frameBuffer[x][y];
+      stroke(intensity);
+      point(x, y);
+    }
+  }
+  
   long timeNeeded = System.nanoTime() - startTime;
   println("Frame rendered in "+ timeNeeded + " nanoseconds.");
 }

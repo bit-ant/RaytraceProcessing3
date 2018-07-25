@@ -67,30 +67,30 @@ ArrayList<Float> union(float[] left, float[] right)
   return union;
 }
 
-ArrayList<Float> intersection(ArrayList<Float> left, ArrayList<Float> right)
+ArrayList<Float> intersection(float[] left, float[] right)
 {
   ArrayList<Float> intersection = new ArrayList<Float>();
   
-  for (Float l : left)
-  {
-    if (right.contains(l))
-    {
-      intersection.add(l);
-    }
-  }
+  if (left[0] < right[0])
+  intersection.add(left[0]);
+  else
+  intersection.add(right[0]);
   
   return intersection;
 }
 
-ArrayList<Float> difference(ArrayList<Float> left, ArrayList<Float> right)
+ArrayList<Float> difference(float[] left, float[] right)
 {
   ArrayList<Float> difference = new ArrayList<Float>();
   
   for (Float l : left)
   {
-    if (!right.contains(l))
+    for (Float r : right)
     {
-      difference.add(l);
+      if (l != r)
+      {
+        difference.add(l);
+      }
     }
   }
   

@@ -43,7 +43,8 @@ void draw()
   //Sphere sphere = new Sphere(250, 250, 110, 100.0);
   //spheres1[0] = sphere;
   
-  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, lightSourceX, lightSourceY, lightSourceZ, spheres, normalGlace);
+  RayTracer myRayTracer = new RayTracer(frameHeight, frameWidth, cameraX, cameraY, cameraZ, screenZ, 
+                                        lightSourceX, lightSourceY, lightSourceZ, spheres, normalGlace);
   myRayTracer.renderScene();
   
    // Show on screen

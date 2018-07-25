@@ -68,6 +68,10 @@ class RayTracer
   
   void renderScene() 
   {
+    // CSG nodes to be used
+    Sphere node1 = new Sphere(250, 250, 180, 50.0);
+    Sphere node2 = new Sphere(270, 270, 180, 50.0);
+        
     for (int h = 0; h < bufferHeight; ++h)
     {
       for (int w = 0; w < bufferWidth; ++w)
@@ -78,26 +82,22 @@ class RayTracer
           // If there is an intersection with the bounding box, proceed with calculating ray-sphere intersection
           if (intersectBox(primRay, boundingBoxes[s]))
           {
-            //renderSphere(primRay, w, h, s);
+            renderSphere(primRay, w, h, s);
           }
         }
         
-        // CSG attempt...
-        Sphere node1 = new Sphere(100, 150, 130, 50.0);
-        //Cube node2 = new Cube(new PVector(239.27863, 108.173218, 120), new PVector(259.27863, 128.173218, 130));
-        Cube node2 = new Cube(new PVector(139.27863, 108.173218, 120), new PVector(209.27863, 128.173218, 150));
-        
-        float[] solSphere = intersectSphere(primRay, node1); //<>//
-        if (solSphere[0] >=0 && intersectBox(primRay, node2))
+        float[] solSphere1 = intersectSphere(primRay, node1);
+        float[] solSphere2 = intersectSphere(primRay, node2);
+
+        ArrayList <Float> sol = intersection(solSphere1, solSphere2); //<>//
+        if (sol.size() > 0)
         {
-          float[] cubeInter = cubeIntersections;
-          ArrayList <Float> sol = union(solSphere, cubeInter);
           Collections.sort(sol);
           float t = sol.get(0);
           t = sol.get(sol.size() - 1);
-          if (t >= 0 && t < zBuffer[w][h]) //<>//
+          if (t >= 0 && t < zBuffer[w][h])
           {
-            zBuffer[w][h] = t; //<>//
+            zBuffer[w][h] = t;
             frameBuffer[w][h] = 80;
           }
         }

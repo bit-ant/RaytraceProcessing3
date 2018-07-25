@@ -197,7 +197,7 @@ boolean intersectBox(Ray ray, Cube box)
   }
   cubeIntersections[0] = tNear;
   cubeIntersections[1] = tFar;
-  return true; // All tests passed, there is an intersection!
+  return true; // All tests passed, there is an intersection! //<>//
 }
 
 // The case of infinite cylinder aligned along the z axis is x^2+y^2 = 1            //
@@ -239,19 +239,4 @@ float[] intersectInfiniteUnitCylinder(Ray ray)
   }
   
   return solutions;
-}
-
-ArrayList<PVector> getIntersections(Ray ray, float[] solutions)
-{
-  ArrayList<PVector> inters = new ArrayList<PVector>();
-  for (int i = 0; i < solutions.length; ++i)
-  {
-    if (solutions[i] > 0)
-    {
-      PVector sol = ray.origin.copy().add(ray.direction.mult(solutions[i]));
-      inters.add(sol);
-    }
-  }
-  
-  return inters;
 }
